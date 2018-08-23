@@ -118,8 +118,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="2.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="fun.cpp" />
     <ClCompile Include="glad.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="fun.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
