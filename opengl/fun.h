@@ -4,10 +4,13 @@
 #include <glad/glad.h>
 #include <math.h>
 #include <iostream>
+#include <soil/SOIL.h>
+#include "skybox.h"
 using namespace std;
 
 extern float a, b , c;
-extern int regx, regy ;
+extern double regx, regy ;
+extern CSkyBox m_SkyBox;
 
 void cube(const GLuint &index, float x, float y, float z, float l, float w, float h);
 

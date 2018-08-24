@@ -78,7 +78,7 @@
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -118,12 +118,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CbmpLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="fun.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="skybox.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CbmpLoader.h" />
     <ClInclude Include="fun.h" />
+    <ClInclude Include="skybox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

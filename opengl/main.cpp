@@ -1,5 +1,25 @@
 #include "fun.h"
-#include   <time.h>   
+#include   <time.h> 
+void init(void)
+{
+	/** 用户自定义的初始化过程 */
+	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
+	glClearDepth(1.0f);
+	glDepthFunc(GL_LEQUAL);
+	glEnable(GL_DEPTH_TEST);
+	glShadeModel(GL_SMOOTH);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+	/** 启用纹理 */
+	glEnable(GL_TEXTURE_2D);
+
+	/** 初始化天空 */
+	if (!m_SkyBox.Init())
+	{
+		exit(0);
+	}
+}
+
 int main(int argc, char* argv[])
 {
 		if (!glfwInit())
@@ -26,6 +46,7 @@ int main(int argc, char* argv[])
 	glViewport(0, 0, width, height);
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.0f, 0.8f, 1.0f, 0.8f);
+	init();
 	//鼠标事件回调
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
 	//键盘事件回调
@@ -38,12 +59,12 @@ int main(int argc, char* argv[])
 	glfwGetFramebufferSize(window, &width, &height);
 	framebuffer_size_callback(window, width, height);
 
-
-	GLuint index = glGenLists(4);
-	cube(index, -0.5, -0.5, -1, 1, 0.5, 2);
-	ground(index+1, -0.5, -0.5, -0.5, 1, 1, 1);
-	cube(index + 2, -0.25, 0, -0.5, 0.5, 0.25, 1);
-	cube(index + 3, 0, 0.1, 0, 0.05, 0.05, 1.5);
+	GLuint index = glGenLists(5);
+	cube(index, -0.5, 0, -1, 1, 0.5, 2);
+	ground(index+1, -0.5, 0, -0.5, 1024, 1, 100);
+	cube(index + 2, -0.25, 0.5, -0.5, 0.5, 0.25, 1);
+	cube(index + 3, 0, 0.6, 0, 0.05, 0.05, 1.5);
+	m_SkyBox.CreateSkyBox(0, 0, 0, 1, 1, 1);
 	while (!glfwWindowShouldClose(window))
 	{
 		myDisplay(window);
