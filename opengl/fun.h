@@ -4,18 +4,18 @@
 #include <glad/glad.h>
 #include <math.h>
 #include <iostream>
-#include <soil/SOIL.h>
-#include "skybox.h"
-#include <gdiplus.h>
 #include <opencv2/opencv.hpp>
+#include <windows.h>
 using namespace cv;
 using namespace std;
-extern float a, b , c;
-extern double regx, regy ;
-extern CSkyBox m_SkyBox;
 
-void cube_tank_bottom(const GLuint &index, float x, float y, float z, float l, float w, float h);
-void cube_tank_top(const GLuint &index, float x, float y, float z, float l, float w, float h);
+#define frame 50
+extern const int timer;
+//extern float a, b , c;
+//extern double regx, regy ;
+
+void creat_cube_list(const GLuint &index, float x, float y, float z, float l, float h, float w
+	,float dx, float dz, vector<string> files);
 void ground(const GLuint &index, float x, float y, float z, float l, float w, float h);
 
 void myDisplay(GLFWwindow* window);

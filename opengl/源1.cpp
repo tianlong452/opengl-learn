@@ -20,12 +20,13 @@ void myDisplay()
 			PointC[] = { 0.0f,-sqrt(6.0f) / 12,sqrt(3.0f) / 3 },
 			PointD[] = { 0.0f,sqrt(6.0f) / 4,0 };
 		GLfloat
-			ColorR[] = { 1,0,0 },
-			ColorG[] = { 0,1,0 },
-			ColorB[] = { 0,0,1 },
-			ColorY[] = { 1,1,0 };
+			ColorR[] = { 1,0,0 ,0},
+			ColorG[] = { 0,1,0 ,1},
+			ColorB[] = { 0,0,1 ,1},
+			ColorY[] = { 1,1,0 ,1};
 
 		list = glGenLists(1); //申请1个显示列表名，并赋值给刚才创建的现实列表变量
+		glEnable(GL_ALPHA_TEST);
 		glNewList(list, GL_COMPILE);
 		glBegin(GL_TRIANGLES);
 		ColoredVertex(ColorR, PointA);
@@ -64,7 +65,6 @@ void myIdle()
 	myDisplay();
 }
 
-/*
 int main(int argc, char* argv[])
 {
 	glutInit(&argc, argv);
@@ -76,4 +76,4 @@ int main(int argc, char* argv[])
 	glutIdleFunc(&myIdle);
 	glutMainLoop();
 	return 0;
-}*/
+}

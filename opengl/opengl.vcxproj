@@ -121,17 +121,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CbmpLoader.cpp" />
     <ClCompile Include="fun.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="skybox.cpp" />
-    <ClCompile Include="源1.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CbmpLoader.h" />
     <ClInclude Include="fun.h" />
-    <ClInclude Include="skybox.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

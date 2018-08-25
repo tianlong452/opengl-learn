@@ -8,7 +8,6 @@
 #include <glad/glad.h>
 #include <math.h>
 #include <iostream>
-#include <soil/SOIL.h>
 #include <string>
 #include "CbmpLoader.h"
 using namespace std;
