@@ -10,13 +10,30 @@ CbmpLoader::~CbmpLoader()
 {
 	FreeImage();
 }
+bool CbmpLoader::Loadimg(const char* file)
+{
+	Mat img = imread(file);
+	cvtColor(img, img, CV_BGR2BGRA);
+	imageWidth = img.cols;                    //保存图像宽和高度
+	imageHeight = img.rows;
+	image = new unsigned char[imageWidth*imageHeight*4];//分配内存
+	for (int i = 0; i < img.rows; ++i)
+	{
+		for (int j = 0; j < img.cols; ++j)
+		{
+			image[i*j * 4 + 4 * j + 0] = img.at<Vec4b>(i, j)[0] = 0;
+			image[i*j * 4 + 4 * j + 1] = img.at<Vec4b>(i, j)[1] = 0;
+			image[i*j * 4 + 4 * j + 2] = img.at<Vec4b>(i, j)[2] = 0;
+			image[i*j*4 +4* j + 3] = img.at<Vec4b>(i, j)[3];
+		}
+	}
+	return true;
+}
 bool CbmpLoader::LoadBitmapa(const char* file)
 {
 	FILE *pFile = 0;                          //定义文件指针
 	BITMAPINFOHEADER bitmapInfoHeader;      //创建位图文件位图信息和文件头结构
 	BITMAPFILEHEADER header;
-	//int width, height;
-	//unsigned char* image = SOIL_load_image(file, &width, &height, 0, SOIL_LOAD_RGB);
 	unsigned char textureColors = 0;      //用于将图像颜色从BGR变换到RGB 
 	pFile = fopen(file, "rb+");               //打开文件并检查错误
 	if (pFile == 0)

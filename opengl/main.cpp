@@ -1,5 +1,5 @@
 #include "fun.h"
-#include   <time.h> 
+#include   <time.h>
 void init(void)
 {
 	/** 用户自定义的初始化过程 */
@@ -22,6 +22,23 @@ void init(void)
 
 int main(int argc, char* argv[])
 {
+/*
+	Mat img = imread(".\\下前面.bmp");
+	cvtColor(img, img, CV_BGR2BGRA);
+	for (int i=0;i<img.rows;++i)
+	{
+		cout << i <<"/"<< img.rows << "\r";
+		for (int j=0;j<img.cols;++j)
+		{
+			if (img.at<Vec4b>(i,j)[1]>200 && img.at<Vec4b>(i, j)[2]>200)
+			{
+				img.at<Vec4b>(i, j)[3] = 0;
+			}
+		}
+	}
+	imwrite("xia.png", img);
+	getchar();
+	exit(0);*/
 		if (!glfwInit())
 			exit(-1);
 		GLFWwindow* window = glfwCreateWindow(1440, 900, "tank", nullptr, nullptr);
@@ -45,6 +62,7 @@ int main(int argc, char* argv[])
 	glfwGetFramebufferSize(window, &width, &height);
 	glViewport(0, 0, width, height);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_ALPHA_TEST);
 	glClearColor(0.0f, 0.8f, 1.0f, 0.8f);
 	init();
 	//鼠标事件回调
@@ -58,12 +76,11 @@ int main(int argc, char* argv[])
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &width, &height);
 	framebuffer_size_callback(window, width, height);
-
 	GLuint index = glGenLists(5);
-	cube(index, -0.5, 0, -1, 1, 0.5, 2);
-	ground(index+1, -0.5, 0, -0.5, 1024, 1, 100);
-	cube(index + 2, -0.25, 0.5, -0.5, 0.5, 0.25, 1);
-	cube(index + 3, 0, 0.6, 0, 0.05, 0.05, 1.5);
+	ground(index + 1, -0.5, 0.0, -0.5, 1024, 1, 100);
+	cube_tank_bottom(index, -0.5, 0, -1, 1, 0.5, 2);
+	cube_tank_top(index + 2, -0.25, 0.5, -0.5, 0.5, 0.25, 1);
+	cube_tank_top(index + 3, 0, 0.6, 0, 0.05, 0.05, 1.5);
 	m_SkyBox.CreateSkyBox(0, 0, 0, 1, 1, 1);
 	while (!glfwWindowShouldClose(window))
 	{

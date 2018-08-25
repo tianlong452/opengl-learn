@@ -2,9 +2,10 @@
 #include <stdio.h>
 #include <iostream>
 #include <gl/glut.h>
-#include <soil/SOIL.h>
+#include <opencv2/opencv.hpp>
 #include <../../../../8.1/Include/shared/wtypes.h>
 using namespace std;
+using namespace  cv;
 #ifndef _CBMPLOADER_H_
 #define _CBMPLOADER_H_
 #define BITMAP_ID 0x4D42  //位图文件标志
@@ -27,6 +28,7 @@ class CbmpLoader
 public:
 	CbmpLoader();
 	~CbmpLoader();
+	bool Loadimg(const char* file);
 	bool LoadBitmapa(const char* file); //载入一个bmp文件            
 	void FreeImage();               //释放图像数据
 	bool Load(const char* fileName);//载入位图并创建纹理
