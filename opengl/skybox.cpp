@@ -25,7 +25,7 @@ bool CSkyBox::Init()
 	char filename[128];                                         /**< 用来保存文件名 */
 	string bmpName[6] = { "back","front","bottom","top","left","right" };
 	for (int i = 0; i< 6; i++)
-	{
+	{	
 		if (!m_texture[i].LoadBitmapa(( string("E:\\cpp\\opengl\\")+bmpName[i] + ".bmp").c_str()))                     /**< 载入位图文件 */
 		{
 			cout <<"装载位图文件失败！"<<endl;    /**< 如果载入失败则弹出对话框 */
@@ -34,12 +34,6 @@ bool CSkyBox::Init()
 		glGenTextures(1, &m_texture[i].ID);                        /**< 生成一个纹理对象名称 */
 
 		glBindTexture(GL_TEXTURE_2D, m_texture[i].ID);             /**< 创建纹理对象 */
-																   /** 控制滤波: */
-																   /*
-																   其中GL_TEXTURE_WRAP_S，GL_TEXTURE_WRAP_T通常可设置为GL_REPEAT或GL_CLAMP两种方式。
-																   当待填充的多边形大于纹理的时候，GL_REPEAT表示多余的部分用重复的方式填充；GL_CLAMP表示多余的部分用相连边缘的相邻像素填充。
-																   在实际绘制中，我们一般采用GL_CLAMP_EDGE来处理，这就消除了接缝处的细线，增强了天空盒的真实感。
-																   */
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -66,7 +60,6 @@ void  CSkyBox::CreateSkyBox(float x, float y, float z,
 	float width = MAP * box_width / 8;
 	float height = MAP * box_height / 8;
 	float length = MAP * box_length / 8;
-
 	/** 计算天空盒中心位置 */
 	x = x + /*MAP / 8*/ - width / 2;
 	y = y + /*MAP / 24*/ - height / 2;
@@ -157,5 +150,4 @@ void  CSkyBox::CreateSkyBox(float x, float y, float z,
 	glEndList();
 	if (lp)                         /** 恢复光照状态 */
 		glEnable(GL_LIGHTING);
-
 }

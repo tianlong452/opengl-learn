@@ -1,48 +1,31 @@
 #include "fun.h"
 #define Pi 3.1415926
 const int timer = 1000 / frame;
-float STEP = 0.2,deg_step=0.5,view_dis = 5;
+const double d2r = Pi / 180;
+float STEP = 0.2,deg_step=0.5,view_dis = 10;
 float a = 0, b = 0, c = 0;
-double regx = 0, regy = 0,eyedeg=180;
+double regx = 0, regy = 0, eyedegv = 180 ,eyedegh = 20;
+int key1 = 0, key2 = 0 ,mkey=8;
 
 int loadimg(const string& filename) {
-	/*clock_t start, finish; double totaltime;
-	start = clock();*/
 	cv::Mat img = cv::imread(filename, CV_LOAD_IMAGE_UNCHANGED);
-	cvtColor(img, img, CV_BGR2RGBA);
+	bool b = img.channels() == 3;
+	if(b)
+		cvtColor(img, img, CV_BGR2RGB);
+	else
+		cvtColor(img, img, CV_BGRA2RGBA);
 	GLuint i;
 	glGenTextures(1, &i);
 	glBindTexture(GL_TEXTURE_2D, i);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, img.cols,
-		img.rows, GL_RGBA, GL_UNSIGNED_BYTE, img.data);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	gluBuild2DMipmaps(GL_TEXTURE_2D, b? GL_RGB:GL_RGBA, img.cols,
+		img.rows, b ? GL_RGB : GL_RGBA, GL_UNSIGNED_BYTE, img.data);
 	img.release();
-	/*finish = clock();
-	totaltime = (double)(finish - start) / CLOCKS_PER_SEC;
-	cout << "\n此程序的运行时间为" << totaltime << "秒！" << endl;*/
 	return i;
 }
-//SOIL 库速度慢
-/*
-int loadimgs(const string& filename) {
-	clock_t start, finish; double totaltime;
-	start = clock();
-	int texwidth, texheight;
-	unsigned char *image = SOIL_load_image(filename.c_str(), &texwidth, &texheight, 0, SOIL_LOAD_RGBA);
-	GLuint i;
-	glGenTextures(1, &i);
-	glBindTexture(GL_TEXTURE_2D, i);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, texwidth,
-		texheight, GL_RGBA, GL_UNSIGNED_BYTE, image);
-	SOIL_free_image_data(image);
-	finish = clock();
-	totaltime = (double)(finish - start) / CLOCKS_PER_SEC;
-	cout << "\n此程序的运行时间为" << totaltime << "秒！" << endl;
-	return i;
-}*/
 
 void myDisplay(GLFWwindow* window)
 {
@@ -68,7 +51,8 @@ void myDisplay(GLFWwindow* window)
 	glCallList(3); // tank top
 	glPopMatrix();
 	glLoadIdentity();
-	gluLookAt(a + view_dis * sin(eyedeg*Pi / 180), 5, c + view_dis * cos(eyedeg*Pi / 180), a, 2, c, 0, 1, 0);
+	double sv = sin(eyedegv*d2r), cv = cos(eyedegv*d2r), sh = sin(eyedegh*d2r), ch = cos(eyedegh*d2r);
+	gluLookAt(a + view_dis * sv * ch,  view_dis*sh  , c + view_dis * cv * ch		  ,a, 2, c,	      0, ch>0?1:-1, 0);
 	glfwSwapBuffers(window);
 	//glfwSwapBuffers(window);
 }
@@ -118,17 +102,17 @@ void creat_cube_list(const GLuint &index, float x, float y, float z, float l, fl
 	glEnd();
 	glEndList();
 }
-void ground(const GLuint &index, float x, float y, float z, float l, float w, float h) {
+void ground(const GLuint &index, float l, float y, float n,string filename) {
 	glNewList(index, GL_COMPILE);
 	glBegin(GL_QUADS);
-	glBindTexture(GL_TEXTURE_2D, loadimg("../b.jpg"));
+	glBindTexture(GL_TEXTURE_2D, loadimg(filename));
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glColor4f(1.0f, 1.0, 1.0, 1.0);
-	glTexCoord2f(h, h);glVertex3f(-l, y + 0, -l);
-	glTexCoord2f(0.0f, h);glVertex3f(l, y + 0, -l);
+	glTexCoord2f(n, n);glVertex3f(-l, y + 0, -l);
+	glTexCoord2f(0.0f, n);glVertex3f(l, y + 0, -l);
 	glTexCoord2f(0.0f, 0.0f);glVertex3f(l, y + 0, l);
-	glTexCoord2f(h, 0.0f);glVertex3f(-l, y + 0, l);
+	glTexCoord2f(n, 0.0f);glVertex3f(-l, y + 0, l);
 	glEnd();
 	glEndList();
 }
@@ -141,9 +125,8 @@ void framebuffer_size_callback(GLFWwindow* window, int w, int h)
 	gluPerspective(60.0, (GLfloat)w / (GLfloat)h, 1.0, 2000);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(view_dis, 5.0,view_dis, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0);
 }
-void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+void mouse_button_callback1(GLFWwindow* window, int button, int action, int mods) {
 	double xposp, yposp;
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
 	{
@@ -167,24 +150,44 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 			double xpos, ypos;
 			glfwPollEvents();
 			glfwGetCursorPos(window, &xpos, &ypos);
-			eyedeg += (xpos - xposp)/10;
+			eyedegv += (xpos - xposp)/10;
 			xposp = xpos;
 			Sleep(timer);
 			myDisplay(window);
 		}
 	}
 }
+void do_mouse(GLFWwindow* window,int mkey, int dx, int dy) {
+	if (mkey == GLFW_MOUSE_BUTTON_LEFT)
+	{
+		regy += dx / 3;
+	}
+	if (mkey == GLFW_MOUSE_BUTTON_RIGHT)
+	{
+			eyedegv += (dx) / 3;
+			eyedegh += dy / 6;
+			eyedegh = eyedegh > 10 ? eyedegh : 10;
+			eyedegh = eyedegh < 170 ? eyedegh : 170;
+			//eyedegh = static_cast<int>(eyedegh)%180;
+	}
+}
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+	if (action == GLFW_PRESS)
+		mkey = button;
+		if (action == GLFW_RELEASE)
+		mkey = 8;
+}
 void scroll_callback(GLFWwindow* window, double x, double y) {
 	if (y == 1)
-		view_dis += 0.2;
+		view_dis += 0.5;
 	if (y == -1)
-		view_dis -= 0.2;
+		view_dis -= 0.5;
 	view_dis = 5>view_dis?5:view_dis;
 }
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos) {
 
 }
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+void key_callback1(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	// 当用户按下ESC键,我们设置window窗口的WindowShouldClose属性为true
 	// 关闭应用程序
@@ -206,6 +209,60 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		deg_step = deg_step>5?5:deg_step;
 		regx -= key == GLFW_KEY_D ? deg_step: -deg_step;
 	}
+}
+void dokey(int key) {
+	if (key == GLFW_KEY_W || key == GLFW_KEY_S )
+	{
+		STEP = 0.8/*action == GLFW_REPEAT ? STEP + 0.1 :*/ ;
+		STEP = STEP > 0.8 ? 0.8 : STEP;
+		double reg = regx * Pi / 180;
+		bool keyw = key == GLFW_KEY_W;
+		a += (keyw ? sin(reg) : -sin(reg))*STEP;
+		c += (keyw ? cos(reg) : -cos(reg))*STEP;
+	}
+	if ((key == GLFW_KEY_D || key == GLFW_KEY_A))
+	{
+		deg_step = (/*(action == GLFW_REPEAT) ? deg_step + 0.5 : */1);
+		deg_step = deg_step > 5 ? 5 : deg_step;
+		regx -= key == GLFW_KEY_D ? deg_step : -deg_step;
+		eyedegv -= key== GLFW_KEY_D ? deg_step : -deg_step;
+	}
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		exit(0);
+	if (action == GLFW_PRESS)
+		if (key1 == 0)
+			key1 = key;
+		else
+			key2 = key;
+
+	if (GLFW_RELEASE == action) {
+		if (key1 == key) {
+			key1 = key2, key2 = 0;
+		}
+		if (key2==key)
+			key2 = 0;
+	}
+}
+
+void mainloop(GLFWwindow *window)
+{
+	while (!glfwWindowShouldClose(window))
+	{
+		myDisplay(window);
+		double xpos, ypos, xposp, yposp;
+		glfwGetCursorPos(window, &xposp, &yposp);
+		Sleep(timer);
+		glfwGetCursorPos(window, &xpos, &ypos);
+		do_mouse(window, mkey, xpos - xposp, ypos - yposp);
+		if (key1) dokey(key1);
+		if (key2)  dokey(key2);
+		glfwPollEvents();
+	}
+	glfwTerminate();
 }
 
 int np2(int v)

@@ -24,9 +24,7 @@ public:
 	bool Init();
 
 	/** äÖÈ¾Ìì¿Õ */
-	void  CreateSkyBox(float x, float y, float z,
-		float width, float height,
-		float length);
+	void  CreateSkyBox(float x, float y, float z,float width, float height,float length);
 
 private:
 
